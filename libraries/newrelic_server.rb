@@ -13,12 +13,12 @@ class Chef
       def self.delete_all(api_key)
         response = HTTParty.get(
           "https://api.newrelic.com/v2/servers.json", 
-          headers: {"X-Api-Key" => api_key}
+          :headers => {"X-Api-Key" => api_key}
         )
         response["servers"].select{ |server| server["reporting"] == false }.each do |server|
           response = HTTParty.delete(
             "https://api.newrelic.com/v2/servers/#{server["id"]}.json",
-            headers: {"X-Api-Key" => api_key}
+            :headers => {"X-Api-Key" => api_key}
           )
           if response.code != 200
             log_error(response.code)
@@ -31,7 +31,7 @@ class Chef
       def get_by_name
         response = ::HTTParty.get(
           "https://api.newrelic.com/v2/servers.json?filter[name]=#{URI.escape(@server_name)}", 
-          headers: {"X-Api-Key" => @api_key}
+          :headers => {"X-Api-Key" => @api_key}
         )
         if response.code != 200
           log_error(response.code)
@@ -48,7 +48,7 @@ class Chef
       def delete
         response = HTTParty.delete(
           "https://api.newrelic.com/v2/servers/#{server_id}.json",
-          headers: {"X-Api-Key" => @api_key}
+          :headers => {"X-Api-Key" => @api_key}
         )
         if response.code != 200
           log_error(response.code)
@@ -60,7 +60,7 @@ class Chef
       def get_policy_by_name(policy_name)
         response = HTTParty.get(
           "https://api.newrelic.com/v2/alert_policies.json?filter[type]=server&filter[name]=#{URI.escape(policy_name)}", 
-          headers: {"X-Api-Key" => @api_key}
+          :headers => {"X-Api-Key" => @api_key}
         )
         if response.code != 200
           log_error(response.code) 
@@ -83,7 +83,7 @@ class Chef
           servers = server_ids << server_id
           response = HTTParty.put(
             "https://api.newrelic.com/v2/alert_policies/#{policy_id}.json", 
-            headers: {"X-Api-Key" => @api_key, "Content-Type" => "application/json"},
+            :headers => {"X-Api-Key" => @api_key, "Content-Type" => "application/json"},
             :body => {
               'alert_policy' => { 
                 'links' => { 
