@@ -16,11 +16,11 @@ provisioner:
   attributes:
     test_kitchen: true
     newrelic:
-      apikey: 'PUT IN A API KEY'
+      apikey: ''
       policy_manager: 
-        server_name: 'PUT IN A NAME'
-        startup_policy: 'Test Server Policy Start-Up'
-        shutdown_policy: 'Test Server Policy Shut-Down'
+        server_name: ''
+        startup_policy: 'App Servers'
+        shutdown_policy: 'Decommissioned Servers'
 
 
 platforms:
