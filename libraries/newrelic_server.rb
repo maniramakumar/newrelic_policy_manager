@@ -3,7 +3,7 @@ class Chef
     class NewrelicServer
 
       def initialize(api_key,server_name)
-        require 'httparty'
+        self.class.send(:include, HTTParty)
         @api_key = api_key
         @server_name = server_name
         @server_response = get_by_name
