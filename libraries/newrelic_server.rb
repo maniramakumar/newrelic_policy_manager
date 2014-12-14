@@ -29,7 +29,7 @@ class Chef
       end
 
       def get_by_name
-        response = ::HTTParty.get(
+        response = HTTParty.get(
           "https://api.newrelic.com/v2/servers.json?filter[name]=#{URI.escape(@server_name)}", 
           :headers => {"X-Api-Key" => @api_key}
         )
