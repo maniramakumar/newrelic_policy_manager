@@ -7,7 +7,7 @@ class Chef
         @api_key = api_key
         @server_name = server_name
         @server_response = get_by_name
-        @policy_response = nil
+        @policy_response = {}
       end
 
       def self.delete_all(api_key)
@@ -104,12 +104,12 @@ class Chef
       end
 
       def policy_id
-        @policy_response["id"] if @policy_response
+        @policy_response["id"]
       end
       private :policy_id
 
       def server_id
-        @server_response["id"] if @server_response
+        @server_response["id"]
       end
       private :server_id
 
