@@ -39,7 +39,7 @@ class Chef
           if response["servers"].length == 1
             return response["servers"].first
           else
-            Chef::Log.warn("Received #{response["servers"].length} servers with the name #{@server_name}, expected exactly one"); exit(1)
+            Chef::Log.warn("Received #{response["servers"].length} servers with the name #{@server_name}, expected exactly one")
           end
         end
       end
@@ -68,7 +68,7 @@ class Chef
           if response["alert_policies"].length == 1
             return response["alert_policies"].first
           else
-            Chef::Log.warn("Received #{response["alert_policies"].length} policies with the name #{policy_name}, expected exactly one"); exit(1)
+            Chef::Log.warn("Received #{response["alert_policies"].length} policies with the name #{policy_name}, expected exactly one")
           end
         end
       end
