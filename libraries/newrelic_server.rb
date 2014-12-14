@@ -23,7 +23,7 @@ class Chef
           if response.code != 200
             log_error(response.code)
           else 
-            Chef::Log.warn "Successfully deleted #{server["name"]}"
+            Chef::Log.info "Successfully deleted #{server["name"]}"
           end
         end
       end
@@ -39,7 +39,7 @@ class Chef
           if response["servers"].length == 1
             return response["servers"].first
           else
-            Chef::Log.warn("Received #{response["servers"].length} servers with the name #{@server_name}, expected exactly one")
+            Chef::Log.error("Received #{response["servers"].length} servers with the name #{@server_name}, expected exactly one")
           end
         end
       end
@@ -53,7 +53,7 @@ class Chef
         if response.code != 200
           log_error(response.code)
         else 
-          Chef::Log.warn("Successfully deleted #{@server_name}")
+          Chef::Log.info("Successfully deleted #{@server_name}")
         end
       end
 
@@ -68,7 +68,7 @@ class Chef
           if response["alert_policies"].length == 1
             return response["alert_policies"].first
           else
-            Chef::Log.warn("Received #{response["alert_policies"].length} policies with the name #{policy_name}, expected exactly one")
+            Chef::Log.error("Received #{response["alert_policies"].length} policies with the name #{policy_name}, expected exactly one")
           end
         end
       end
@@ -76,7 +76,6 @@ class Chef
 
       def add_to_policy(policy_name)
         @policy_response = get_policy_by_name(policy_name)
-
         if server_ids.include? server_id
           Chef::Log.warn("Server #{@server_name} already belongs to policy with id #{policy_id}")
         else
@@ -98,19 +97,19 @@ class Chef
             if response["alert_policy"]["links"]["servers"].empty?
               Chef::Log.warn response
             else 
-              Chef::Log.warn "Successfully added server #{server_id} to alert policy with id #{policy_id}"
+              Chef::Log.info "Successfully added server #{server_id} to alert policy with id #{policy_id}"
             end
           end
         end
       end
 
       def policy_id
-        @policy_response["id"]
+        @policy_response["id"] if @policy_response
       end
       private :policy_id
 
       def server_id
-        @server_response["id"]
+        @server_response["id"] if @server_response
       end
       private :server_id
 
