@@ -109,7 +109,7 @@ class Chef
       private :policy_id
 
       def server_id
-        @server_response["id"]
+        @server_response ? @server_response["id"] : get_by_name["id"]
       end
       private :server_id
 
