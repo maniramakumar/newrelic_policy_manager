@@ -6,7 +6,7 @@ class Chef
         self.class.send(:include, HTTParty)
         @api_key = api_key
         @server_name = server_name
-        @server_response = get_by_name
+        @server_response = {}
         @policy_response = {}
       end
 
@@ -28,6 +28,18 @@ class Chef
         end
       end
 
+      def delete
+        response = HTTParty.delete(
+          "https://api.newrelic.com/v2/servers/#{server_id}.json",
+          :headers => {"X-Api-Key" => @api_key}
+        )
+        if response.code != 200
+          log_error(response.code)
+        else 
+          Chef::Log.info("Successfully deleted #{@server_name}")
+        end
+      end
+
       def get_by_name
         response = HTTParty.get(
           "https://api.newrelic.com/v2/servers.json?filter[name]=#{URI.escape(@server_name)}", 
@@ -42,20 +54,9 @@ class Chef
             Chef::Log.error("Received #{response["servers"].length} servers with the name #{@server_name}, expected exactly one")
           end
         end
+        {}
       end
       private :get_by_name
-
-      def delete
-        response = HTTParty.delete(
-          "https://api.newrelic.com/v2/servers/#{server_id}.json",
-          :headers => {"X-Api-Key" => @api_key}
-        )
-        if response.code != 200
-          log_error(response.code)
-        else 
-          Chef::Log.info("Successfully deleted #{@server_name}")
-        end
-      end
 
       def get_policy_by_name(policy_name)
         response = HTTParty.get(
@@ -63,7 +64,7 @@ class Chef
           :headers => {"X-Api-Key" => @api_key}
         )
         if response.code != 200
-          log_error(response.code) 
+          log_error(response.code)
         else 
           if response["alert_policies"].length == 1
             return response["alert_policies"].first
@@ -71,33 +72,38 @@ class Chef
             Chef::Log.error("Received #{response["alert_policies"].length} policies with the name #{policy_name}, expected exactly one")
           end
         end
+        {}
       end
       private :get_policy_by_name
 
       def add_to_policy(policy_name)
+        @server_response = get_by_name
         @policy_response = get_policy_by_name(policy_name)
-        if server_ids.include? server_id
-          Chef::Log.warn("Server #{@server_name} already belongs to policy with id #{policy_id}")
-        else
-          servers = server_ids << server_id
-          response = HTTParty.put(
-            "https://api.newrelic.com/v2/alert_policies/#{policy_id}.json", 
-            :headers => {"X-Api-Key" => @api_key, "Content-Type" => "application/json"},
-            :body => {
-              'alert_policy' => { 
-                'links' => { 
-                  'servers'=> servers
+
+        unless @server_response.empty? && @policy_response.empty?
+          if server_ids.include? server_id
+            Chef::Log.warn("Server #{@server_name} already belongs to #{policy_name}")
+          else
+            servers = server_ids << server_id
+            response = HTTParty.put(
+              "https://api.newrelic.com/v2/alert_policies/#{policy_id}.json", 
+              :headers => {"X-Api-Key" => @api_key, "Content-Type" => "application/json"},
+              :body => {
+                'alert_policy' => { 
+                  'links' => { 
+                    'servers'=> servers
+                    }
                   }
-                }
-              }.to_json
-          )
-          if response.code != 200
-            log_error(response.code)
-          else 
-            if response["alert_policy"]["links"]["servers"].empty?
-              Chef::Log.warn response
+                }.to_json
+            )
+            if response.code != 200
+              log_error(response.code)
             else 
-              Chef::Log.info "Successfully added server #{server_id} to alert policy with id #{policy_id}"
+              if response["alert_policy"]["links"]["servers"].empty?
+                Chef::Log.warn response
+              else 
+                Chef::Log.info "Successfully added server #{@server_name} to alert policy with id #{policy_name}"
+              end
             end
           end
         end
@@ -109,7 +115,7 @@ class Chef
       private :policy_id
 
       def server_id
-        @server_response ? @server_response["id"] : get_by_name["id"]
+        @server_response["id"]
       end
       private :server_id
 
