@@ -1,3 +1,8 @@
+gem_package "httparty" do
+  version "0.11.0"
+  action :install
+end
+
 template "/usr/local/bin/delete_stopped" do
   source "delete_stopped.erb"
   mode '0744'

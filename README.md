@@ -12,8 +12,8 @@ This cookbook allows the designation of which Newrelic Alert Policy a server sho
 #### Attributes
 - `node[:newrelic][:apikey]` *required, defaults to nil*
 - `node[:newrelic][:policy_manager][:server_name]` The name of the server that you want to add to a different policy.
-- `node[:newrelic][:policy_manager][:startup_policy]` The policy that you want the server to be added to on startup.  *defaults to 'Default server alert policy'*
-- `node[:newrelic][:policy_manager][:shutdown_policy]` The policy that you want the server to be added to on startup. *defaults to `node[:newrelic][:policy_manager][:startup_policy]`*
+- `node[:newrelic][:policy_manager][:startup_policy]` The policy that you want `:server_name` to be added to on startup.  *defaults to 'Default server alert policy'*
+- `node[:newrelic][:policy_manager][:shutdown_policy]` The policy that you want `:server_name` to be added to on startup. *defaults to `node[:newrelic][:policy_manager][:startup_policy]`*
 
 #####The following are only needed for the delete_stopped recipe:
 
