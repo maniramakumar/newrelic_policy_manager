@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+require 'httparty'
+
+def delete_stopped
+  #Getting all servers in newrelic
+  response = HTTParty.get(
+    "https://api.newrelic.com/v2/servers.json", 
+    :headers => {"X-Api-Key" => '<%= @api_key %>'}
+  )
+  #Delete all servers that are no longer reporting.
+  response["servers"].select{ |server| server["reporting"] == false }.each do |server|
+    response = HTTParty.delete(
+      "https://api.newrelic.com/v2/servers/#{server["id"]}.json",
+      :headers => {"X-Api-Key" => '<%= @api_key %>'}
+    )
+    if response.code != 200
+      puts "Did not delete #{server["name"]}, got a #{response.code} instead"
+    else 
+      puts "Successfully deleted #{server["name"]}"
+    end
+  end
+end
+
+delete_stopped

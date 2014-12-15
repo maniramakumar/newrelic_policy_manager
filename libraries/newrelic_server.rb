@@ -10,24 +10,6 @@ class Chef
         @policy_response = {}
       end
 
-      def self.delete_all(api_key)
-        response = HTTParty.get(
-          "https://api.newrelic.com/v2/servers.json", 
-          :headers => {"X-Api-Key" => api_key}
-        )
-        response["servers"].select{ |server| server["reporting"] == false }.each do |server|
-          response = HTTParty.delete(
-            "https://api.newrelic.com/v2/servers/#{server["id"]}.json",
-            :headers => {"X-Api-Key" => api_key}
-          )
-          if response.code != 200
-            log_error(response.code)
-          else 
-            Chef::Log.info "Successfully deleted #{server["name"]}"
-          end
-        end
-      end
-
       def delete
         response = HTTParty.delete(
           "https://api.newrelic.com/v2/servers/#{server_id}.json",

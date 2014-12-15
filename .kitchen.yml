@@ -16,9 +16,9 @@ provisioner:
   attributes:
     test_kitchen: true
     newrelic:
-      apikey: ''
+      apikey: 'asdfasdfasdfasdfasdfasdf'
       policy_manager: 
-        server_name: ''
+        server_name: 'Test Server'
         startup_policy: 'App Servers'
         shutdown_policy: 'Decommissioned Servers'
 
@@ -42,5 +42,6 @@ suites:
   - name: default
     run_list:
       #- recipe[newrelic_policy_manager::add_to_policy]
-      - recipe[newrelic_policy_manager::remove_from_policy]
+      #- recipe[newrelic_policy_manager::remove_from_policy]
+      - recipe[newrelic_policy_manager::delete_stopped]
     attributes:
