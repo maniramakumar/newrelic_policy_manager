@@ -35,7 +35,7 @@ platforms:
       security_group_ids: ['ci-testing']
       interface: public
       tags:
-        Name: <%= "##{ENV['CI'] ? 'travis-ci' : ENV['USER']}-ebs_backups-kitchen" %>
+        Name: <%= "#{ENV['CI'] ? 'travis-ci' : ENV['USER']}-newrelic_policy_manager-kitchen" %>
         Env: public
 
 suites:
