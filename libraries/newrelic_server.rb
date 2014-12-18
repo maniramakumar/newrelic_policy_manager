@@ -30,13 +30,13 @@ class Chef
         if response.code != 200
           log_error(response.code)
         else 
-          if response["servers"].length == 1
-            return response["servers"].first
+          if response["servers"].length <= 0
+            Chef::Log.error("Received 0 servers with the name #{@server_name}, expected exactly one")
+            {}
           else
-            Chef::Log.error("Received #{response["servers"].length} servers with the name #{@server_name}, expected exactly one")
+            response["servers"].first
           end
         end
-        {}
       end
       private :get_by_name
 
@@ -48,13 +48,13 @@ class Chef
         if response.code != 200
           log_error(response.code)
         else 
-          if response["alert_policies"].length == 1
-            return response["alert_policies"].first
+          if response["alert_policies"].length <= 0
+            CHef::log.error("Received 0 policies with the name #{policy_name}, expected exactly one")
+            {}
           else
-            Chef::Log.error("Received #{response["alert_policies"].length} policies with the name #{policy_name}, expected exactly one")
+            response["alert_policies"].select{ |alert_policy| alert_policy["name"] == policy_name }.first
           end
         end
-        {}
       end
       private :get_policy_by_name
 
@@ -119,3 +119,5 @@ class Chef
     end
   end
 end
+
+
