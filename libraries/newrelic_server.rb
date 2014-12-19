@@ -81,7 +81,7 @@ class Chef
             if response.code != 200
               log_error(response.code)
             else 
-              if @policy_response["links"] && !@policy_response["links"]["servers"].include? server_id
+              if @policy_response["links"] && !@policy_response["links"]["servers"].include?(server_id)
                 Chef::Log.error "Failed to added server #{@server_name} to alert policy with name #{policy_name}"
               else 
                 Chef::Log.info "Successfully added server #{@server_name} to alert policy with name #{policy_name}"

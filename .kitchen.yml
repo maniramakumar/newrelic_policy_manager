@@ -29,7 +29,7 @@ platforms:
     driver_config:
       ssh_key: <%= ENV['EC2_SSH_KEY_PATH'] %>
       username: ec2-user
-      image_id: ami-0e289766
+      image_id: ami-246ed34c
       region: us-east-1
       availability_zone: us-east-1b
       security_group_ids: ['ci-testing']
@@ -41,7 +41,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      #- recipe[newrelic_policy_manager::add_to_policy]
+      - recipe[newrelic_policy_manager::add_to_policy]
       #- recipe[newrelic_policy_manager::remove_from_policy]
-      - recipe[newrelic_policy_manager::delete_stopped]
+      #- recipe[newrelic_policy_manager::delete_stopped]
     attributes:
