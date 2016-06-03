@@ -1,0 +1,13 @@
+sudo: false
+env:
+  global:
+  - EC2_SSH_KEY_PATH: id_rsa_kitchen_ec2.pem
+before_install:
+- chmod 600 id_rsa_kitchen_ec2.pem
+script: bundle exec kitchen test -d always
+language: ruby
+bundler_args: --without development --deployment --jobs=3 --retry=3
+cache: bundler
+branches:
+  only:
+    - master

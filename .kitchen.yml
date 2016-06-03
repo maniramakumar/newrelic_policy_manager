@@ -2,14 +2,11 @@
   fog_file = YAML.load_file(fog_file)
   ENV['AWS_ACCESS_KEY_ID'] ||= fog_file.fetch('travis-ci', {})['aws_access_key_id']
   ENV['AWS_SECRET_ACCESS_KEY'] ||= fog_file.fetch('travis-ci', {})['aws_secret_access_key']
-  ENV['AWS_KEYPAIR_NAME'] ||= fog_file.fetch('travis-ci', {})['aws_keypair_name']
+  ENV['AWS_SSH_KEY_ID'] ||= fog_file.fetch('travis-ci', {})['aws_keypair_name']
   ENV['EC2_SSH_KEY_PATH'] ||= File.expand_path('~/.ssh/id_rsa_kitchen_ec2')
 end %>
 driver:
-  aws_access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
-  aws_secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
-  aws_ssh_key_id: <%= ENV['AWS_KEYPAIR_NAME'] %>
-  require_chef_omnibus: "11.4.4"
+  require_chef_omnibus: "11.10.4"
 
 provisioner:
   name: chef_solo
@@ -24,12 +21,12 @@ provisioner:
 
 
 platforms:
-  - name: amazon-2014.10
+  - name: amazon-2015.09
     driver_plugin: ec2
     driver_config:
-      ssh_key: <%= ENV['EC2_SSH_KEY_PATH'] %>
-      username: ec2-user
-      image_id: ami-246ed34c
+      shared_credentials_profile: travis-ci
+      instance_type: c3.large
+      image_id: ami-66b6c60c
       region: us-east-1
       availability_zone: us-east-1b
       security_group_ids: ['ci-testing']
@@ -37,11 +34,14 @@ platforms:
       tags:
         Name: <%= "#{ENV['CI'] ? 'travis-ci' : ENV['USER']}-newrelic_policy_manager-kitchen" %>
         Env: public
+    transport:
+      ssh_key: <%= ENV['EC2_SSH_KEY_PATH'] %>
+      username: ec2-user
 
 suites:
   - name: default
     run_list:
       - recipe[newrelic_policy_manager::add_to_policy]
-      #- recipe[newrelic_policy_manager::remove_from_policy]
-      #- recipe[newrelic_policy_manager::delete_stopped]
+      - recipe[newrelic_policy_manager::remove_from_policy]
+      - recipe[newrelic_policy_manager::delete_stopped]
     attributes:
